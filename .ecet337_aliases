@@ -1,0 +1,34 @@
+# ECET 337 Quick Aliases
+# Add to your ~/.bashrc: source "/home/barney/School Work/Spring 2026/ECET 337/.ecet337_aliases"
+
+# Course directory
+export ECET337_DIR="/home/barney/School Work/Spring 2026/ECET 337"
+
+# Quick navigation
+alias ecet337='cd "$ECET337_DIR" && bash ecet337-quick-nav.sh'
+alias matlab337='cd "$ECET337_DIR" && bash matlab-helper.sh'
+alias ecet337cd='cd "$ECET337_DIR"'
+
+# Quick access to folders
+alias ecethw='cd "$ECET337_DIR/Homework"'
+alias ecetlab='cd "$ECET337_DIR/Lab Exercises"'
+alias ecetlec='cd "$ECET337_DIR/Lectures"'
+alias ecetinfo='cd "$ECET337_DIR/Course Info"'
+alias ecetbook='cd "$ECET337_DIR/Textbook"'
+
+# View important files
+alias ecettrack='cat "$ECET337_DIR/assignment-tracker.md"'
+alias ecetref='cat "$ECET337_DIR/quick-reference.md"'
+alias ecetstudy='cat "$ECET337_DIR/study-schedule.md"'
+alias ecethelp='cat "$ECET337_DIR/README.md"'
+
+# Quick file searches
+alias ecetfindm='find "$ECET337_DIR" -name "*.m" ! -name "*.Zone.Identifier" -type f'
+alias ecetfindms='find "$ECET337_DIR" -name "*.ms14" -o -name "*.ms12" ! -name "*.Zone.Identifier" -type f'
+alias ecetfindpdf='find "$ECET337_DIR" -name "*.pdf" ! -name "*.Zone.Identifier" -type f'
+
+# Current week (create this file weekly)
+alias ecetweek='cat "$ECET337_DIR/current-week.txt" 2>/dev/null || echo "No current week data"'
+
+echo "ECET 337 aliases loaded!"
+echo "Type 'ecethelp' to see README or 'ecet337' to launch navigation"

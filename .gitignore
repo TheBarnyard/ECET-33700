@@ -28,3 +28,6 @@ venv/
 # Claude Code local settings
 .claude/settings.local.json
 .needs-push
+# Large video files
+Lab Exercises/*.mp4
+Lectures/*.mp4

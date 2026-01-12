@@ -1,0 +1,163 @@
+/**********************************************************************
+   Author: Joshua Bell
+   Modified by: Baylen Jobe, Joe Bormann
+   Frequency generator with PWM
+   Display Duty cycle on 7 seg display
+ 
+   Hardware connections:
+   A0: potentiometer
+   PWM out: PIN 12
+   Purdue Arduino Sheild
+ 
+   Can generate PWM signals at 50Hz, 500Hz, 5kHz, 50kHz
+ 
+ 
+   Further modification of the program can produce more dynamic frequencies however, OCRnB
+   (Determines Duty cycle) is directly tied to OCRnA (frequency) such that when you adjust OCR1A,
+   The range of duty cycle values must be less than OCR1A.
+ 
+   the value for the duty cycle in terms of OCR1B is = (A0(value)*OCR1A(value))/1023
+   values too large will overflow and prevent A0 from properlly controlling the duty cycle.
+   this can be mitigated by changing the prescaler SEE ATMEGA2560 DATASHEET page 158
+ 
+ ********************************************************************/
+ 
+ 
+//// set this value to desired high frequency (50kHz) pwm of fV frequency
+#define Frequency 50000  /// must be defined as:50000
+
+int encoder=0;       //encoder period
+int RPM=0;
+int count;          //used in the 50 kHz f-V routine
+int fV = 50;        //sets the pw of the 50 kHz for f-v
+int Duty_cycle;     //desired dutycycle to motor from A0 potread
+int Perdisplay;     // 0 to 99  %  value to 7 segment displays
+
+int PV=0;
+int STP=0;
+float error=0;
+float integral=0; 
+float kp=1; 
+float ki=0; 
+float CO=0;
+int pwmout=0; 
+
+const int LBL = 44; //left !blank
+const int LLT = 43; //left !lamp test
+const int LLE = 45; //left latch enable
+const int RBL = 41; //right !blank
+const int RLT = 40; //right !lamp test
+const int RLE = 42; //right latch enable
+
+
+ 
+void setup() 
+{
+ pinMode(7,OUTPUT);   //pwm to drive motor (1kHz)
+ pinMode(2,INPUT);    //Encoder Channel A  500 per rev
+
+ pinMode(LBL,OUTPUT);
+ pinMode(LLT,OUTPUT);
+ pinMode(LLE,OUTPUT);
+ pinMode(RBL,OUTPUT);   
+ pinMode(RLT,OUTPUT);
+ pinMode(RLE,OUTPUT);
+  
+ attachInterrupt(0,freq,RISING);   //interrupt process every rise on encoder channel A step up
+ Serial.begin(9600);
+ 
+
+timer_setup();
+ DDRC = 0xFF; //pins 30 - 33 is MSB 7seg pins 34-37 is LSB 7seg
+ digitalWrite(RLT, HIGH);  //setting !BL and !LT high for both ICs
+ digitalWrite(RBL,HIGH);
+ digitalWrite(LLT,HIGH);
+ digitalWrite(LBL,HIGH);
+ digitalWrite(LLE,LOW);  //setting LE LOW for both
+ digitalWrite(RLE,LOW);
+ PORTC = 0xFF; //displays a blank on 7seg 
+}
+ 
+
+ 
+void loop()
+{
+//get and report the motor's speed
+  delay(10);          //wait for 10 msec while routine below counts pulses from the encoder
+  RPM=encoder*2.93;     //scale 570 pulses/10msec to RPM  (2048 ppr encoder)
+  fV=encoder*0.175;     //1700RPM=>570pulse/10msec=>100%  to set 50kHz pulse width to speed
+  encoder=0;
+  OCR1B = (uint32_t)count * fV / 100; // Use this line to set 50kHz pulse width to speed
+  
+//read pot, report to 7seg display & serial monitor, drive motor
+  
+  STP=(analogRead(0)/10.24);
+  display7seg(STP); 
+  PV=RPM*0.0588;           //scale 1700 RPM => 100% 
+  error=STP-PV;
+  integral=integral+0.01*error;
+  
+  CO=kp*error+ki*integral;  
+  if (CO>100) 
+    CO=99;
+  if (CO<0) 
+     CO=1;
+  
+  pwmout=CO*2.55; 
+  analogWrite(7,pwmout);
+
+  Serial.print(STP);  
+  Serial.print("\t");  
+  Serial.print(PV);  
+  Serial.print("\t");  
+  Serial.println(CO);    
+}
+ 
+
+
+// increment every encoder CH A rise to measure motor speed 
+void freq()                       
+{
+  encoder=encoder+1;
+}
+
+
+
+
+//set 50kHz pulse width as indication of motor speed
+void timer_setup(void)  
+{
+  pinMode(11, OUTPUT);
+  pinMode(12, OUTPUT);
+  TCCR1A = _BV(COM1A1) | _BV(COM1B1) | _BV(WGM10) | _BV(WGM11);
+  TCCR1B = _BV(CS11) | _BV(WGM12) | _BV(WGM13);
+  count = (16000000UL / (Frequency)) - 1;
+  TCCR1B = _BV(CS10) | _BV(WGM12) | _BV(WGM13);
+  OCR1A = count;  
+}
+
+
+
+//write % to the 7 segment display
+void display7seg(uint8_t data)//load BCD and toggle !BL    Places % on 7 seg displays
+{
+  uint8_t rightnum = 0;
+  uint8_t leftnum = 0;
+
+  if(data > 9)
+  {
+    leftnum = data/10;    
+    rightnum = data%10;
+  }
+  else
+  {
+    leftnum = 0;
+    rightnum = data;
+  }
+  leftnum = leftnum<<4; //sliding leftnum to most sig 4 bits
+  PORTC &=0x00;
+  PORTC |= leftnum|rightnum; //outputs to PORTC (7 Segs)
+ 
+  digitalWrite(RLE, LOW);
+  digitalWrite(LLE,LOW);  //toggle control pins to try to load value to 7seg
+}
