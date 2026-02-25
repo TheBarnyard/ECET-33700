@@ -1,13 +1,42 @@
-# Variate Practice — Tools & Answer Keys
+# Variate Practice — Answer Key Generator
+
+## TL;DR — How to get answers for ANY practice assignment (0 attempts used)
+
+```
+1. Open Variate practice page in browser
+2. DevTools (F12) → Network tab → reload page
+3. Right-click any request to purdue.api.variate.org → "Copy all as fetch"
+4. Paste into a .txt file (e.g. ~/Downloads/ECET 337/filter_capture.txt)
+5. Run:
+   python3 variate_full_extractor.py --from-har filter_capture.txt --output answers.html
+6. Open answers.html in browser — all answers shown, calculator included
+```
+
+---
+
+## How it actually works (the key insight)
+
+Variate pre-computes answer values **before you ever submit anything** and sends them to the browser as part of the initial page load. The API endpoint:
+
+```
+GET https://purdue.api.variate.org/api/groupAssessments/{ID}/problemInstances
+```
+
+Returns `formattedVariableValues` — the **exact computed answer values** for your randomized session — along with every question's text artifact URL. All artifact URLs are publicly readable Azure blob storage links. Zero attempts required.
+
+---
 
 ## Files in this folder
 
 | File | Purpose |
 |------|---------|
-| `ECET337_Laplace_Transforms_Practice_Answers.html` | **Full answer key** for Laplace Transforms Practice with all work shown |
-| `variate_scraper.py` | Python script to extract questions from SingleFile HTML exports |
-| `answer_intercept.js` | Browser console script to capture correct answers during live sessions |
-| `scrape_all_practices.sh` | Batch script to process all Variate exports at once |
+| `variate_full_extractor.py` | **Main tool** — API extractor + HTML answer key generator |
+| `capture_network_bookmarklet.js` | Paste in browser console to auto-capture network requests |
+| `generate_all.sh` | Batch-process all capture files in your Downloads folder |
+| `ECET337_Filter_Terminology_Practice_Answers.html` | Ready-made answer key (GA 13873) |
+| `ECET337_Laplace_Transforms_Practice_Answers.html` | Laplace Transforms answer reference |
+| `variate_scraper.py` | Legacy SingleFile HTML extractor (for question text only) |
+| `answer_intercept.js` | Legacy: intercepts grading responses after submission |
 
 ---
 
