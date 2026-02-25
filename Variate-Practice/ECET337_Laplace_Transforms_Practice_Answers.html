@@ -1,0 +1,777 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ECET 337 – Laplace Transforms Practice – Answer Key</title>
+<script>
+// KaTeX for rendering LaTeX
+document.addEventListener("DOMContentLoaded", function() {
+  renderMathInElement(document.body, {
+    delimiters: [
+      {left: "$$", right: "$$", display: true},
+      {left: "$", right: "$", display: false}
+    ]
+  });
+});
+</script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
+<style>
+  :root {
+    --gold: #CFB991;
+    --black: #000000;
+    --dark: #1a1a1a;
+    --bg: #fafafa;
+    --card: #ffffff;
+    --border: #e0e0e0;
+    --correct: #2e7d32;
+    --correct-bg: #e8f5e9;
+    --work: #1565c0;
+    --work-bg: #e3f2fd;
+    --table-head: #4a148c;
+    --table-head-text: #fff;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Segoe UI', Arial, sans-serif; background: var(--bg); color: var(--dark); font-size: 15px; }
+  header {
+    background: var(--black);
+    color: var(--gold);
+    padding: 18px 32px;
+    display: flex; align-items: center; gap: 16px;
+  }
+  header h1 { font-size: 1.4rem; }
+  header p { font-size: 0.85rem; opacity: 0.8; margin-top: 4px; }
+  .meta-bar {
+    background: var(--gold);
+    color: var(--black);
+    padding: 8px 32px;
+    font-size: 0.85rem;
+    font-weight: 600;
+  }
+  .container { max-width: 1100px; margin: 0 auto; padding: 24px 20px; }
+
+  /* Reference Table */
+  .ref-table-section { margin-bottom: 32px; }
+  .ref-table-section h2 { font-size: 1.1rem; color: var(--table-head); margin-bottom: 10px; }
+  table.ref { border-collapse: collapse; width: 100%; font-size: 0.88rem; }
+  table.ref th { background: var(--table-head); color: var(--table-head-text); padding: 8px 12px; text-align: center; }
+  table.ref td { border: 1px solid var(--border); padding: 6px 12px; text-align: center; vertical-align: middle; }
+  table.ref tr:nth-child(even) td { background: #f3e5f5; }
+  table.ref tr:hover td { background: #ede7f6; }
+
+  /* Problem blocks */
+  .problem-section { margin-bottom: 36px; }
+  .problem-header {
+    background: var(--black);
+    color: var(--gold);
+    padding: 10px 18px;
+    border-radius: 6px 6px 0 0;
+    font-size: 1.1rem;
+    font-weight: 700;
+  }
+  .problem-body { border: 1px solid var(--border); border-top: none; border-radius: 0 0 6px 6px; overflow: hidden; }
+
+  .q-block { border-bottom: 1px solid var(--border); padding: 16px 20px; }
+  .q-block:last-child { border-bottom: none; }
+  .q-num {
+    display: inline-block;
+    background: var(--gold);
+    color: var(--black);
+    font-weight: 700;
+    font-size: 0.82rem;
+    padding: 2px 8px;
+    border-radius: 3px;
+    margin-bottom: 6px;
+  }
+  .q-text { font-weight: 600; margin-bottom: 10px; line-height: 1.5; }
+  .q-text .pts { font-weight: 400; color: #888; font-size: 0.82rem; }
+
+  .answer-box {
+    background: var(--correct-bg);
+    border-left: 4px solid var(--correct);
+    border-radius: 0 4px 4px 0;
+    padding: 10px 14px;
+    margin-bottom: 8px;
+  }
+  .answer-box .label { font-size: 0.78rem; font-weight: 700; color: var(--correct); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 4px; }
+  .answer-box .value { font-size: 1.05rem; }
+
+  .work-box {
+    background: var(--work-bg);
+    border-left: 4px solid var(--work);
+    border-radius: 0 4px 4px 0;
+    padding: 10px 14px;
+  }
+  .work-box .label { font-size: 0.78rem; font-weight: 700; color: var(--work); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 6px; }
+  .work-box .step { margin-bottom: 6px; line-height: 1.7; }
+  .work-box .step:last-child { margin-bottom: 0; }
+
+  .table-ref-badge {
+    display: inline-block;
+    background: var(--table-head);
+    color: #fff;
+    font-size: 0.8rem;
+    padding: 2px 8px;
+    border-radius: 10px;
+    font-weight: 700;
+  }
+
+  /* How answers differ per problem instance callout */
+  .instance-note {
+    background: #fff8e1;
+    border: 1px solid #ffe082;
+    border-radius: 6px;
+    padding: 12px 16px;
+    margin-bottom: 20px;
+    font-size: 0.88rem;
+  }
+  .instance-note strong { color: #e65100; }
+
+  .formula-key {
+    background: #e8eaf6;
+    border-radius: 6px;
+    padding: 14px 18px;
+    margin-bottom: 16px;
+    font-size: 0.9rem;
+  }
+  .formula-key h3 { font-size: 0.95rem; margin-bottom: 8px; color: #283593; }
+  .formula-key p { margin-bottom: 4px; line-height: 1.8; }
+
+  .toc { margin-bottom: 24px; }
+  .toc a { margin-right: 10px; color: var(--work); font-size: 0.88rem; }
+
+  @media print {
+    .work-box { break-inside: avoid; }
+    .q-block { break-inside: avoid; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div>
+    <h1>ECET 337 — Laplace Transforms Practice</h1>
+    <p>Answer Key with Full Work &nbsp;|&nbsp; Spring 2026 &nbsp;|&nbsp; Purdue University</p>
+  </div>
+</header>
+<div class="meta-bar">
+  Problems 1–3 each have the same structure with different numerical values.
+  Table references are from Nixon's Laplace Transform Table (Table A-1 / Table 4-1).
+</div>
+
+<div class="container">
+
+  <!-- ===================== INSTANCE NOTE ===================== -->
+  <div class="instance-note">
+    <strong>⚠ Note on randomized values:</strong> Variate generates each problem set with different numbers each page load.
+    The <em>structure</em> of every answer is the same — only the constants change.
+    Use the <strong>formulas</strong> shown in the work boxes to substitute your specific values.
+    The table line numbers are always the same regardless of values.
+  </div>
+
+  <!-- ===================== FORMULA KEY ===================== -->
+  <div class="formula-key">
+    <h3>Laplace Transform Definition (Integral Form)</h3>
+    <p>$$\mathcal{L}\{f(t)\} = F(s) = \int_0^{\infty} f(t)\, e^{-st}\, dt$$</p>
+    <h3>Key Pattern for These Problems</h3>
+    <p><strong>DC (Step):</strong> $f(t) = A \;\Rightarrow\; F(s) = \dfrac{A}{s}$ &nbsp;&nbsp; <span class="table-ref-badge">Table 2</span></p>
+    <p><strong>Sine:</strong> $f(t) = A\sin(\omega t) \;\Rightarrow\; F(s) = \dfrac{A\omega}{s^2+\omega^2}$ &nbsp;&nbsp; <span class="table-ref-badge">Table 6</span></p>
+    <p><strong>Ramp:</strong> $f(t) = At \;\Rightarrow\; F(s) = \dfrac{A}{s^2}$ &nbsp;&nbsp; <span class="table-ref-badge">Table 4</span></p>
+    <p><strong>Decay exp:</strong> $f(t) = Ae^{-t/\tau} \;\Rightarrow\; F(s) = \dfrac{A\tau}{\tau s+1}$ &nbsp;&nbsp; <span class="table-ref-badge">Table 13a</span></p>
+    <p><strong>Rising exp:</strong> $f(t) = A(1-e^{-t/\tau}) \;\Rightarrow\; F(s) = \dfrac{A}{s(\tau s+1)}$ &nbsp;&nbsp; <span class="table-ref-badge">Table 17a</span></p>
+  </div>
+
+  <!-- ===================== REFERENCE TABLE ===================== -->
+  <div class="ref-table-section">
+    <h2>Nixon Laplace Transform Table (Relevant Entries)</h2>
+    <table class="ref">
+      <thead>
+        <tr>
+          <th>No.</th>
+          <th>$F(s)$</th>
+          <th>$f(t)$</th>
+          <th>Comments</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td>1</td><td>$1$</td><td>$\delta(t)$</td><td>Unit impulse</td></tr>
+        <tr><td>2</td><td>$\dfrac{A}{s}$</td><td>$A$ (step)</td><td><strong>Step / DC</strong></td></tr>
+        <tr><td>3</td><td>$\dfrac{1}{s}$</td><td>$U(t)$ unit step</td><td>Unit step</td></tr>
+        <tr><td>4</td><td>$\dfrac{A}{s^2}$</td><td>$At$</td><td><strong>Ramp</strong></td></tr>
+        <tr><td>5</td><td>$\dfrac{2A}{s^3}$</td><td>$At^2$</td><td>Parabola</td></tr>
+        <tr><td>6</td><td>$\dfrac{A\omega}{s^2+\omega^2}$</td><td>$A\sin(\omega t)$</td><td><strong>Sine</strong></td></tr>
+        <tr><td>7</td><td>$\dfrac{As}{s^2+\omega^2}$</td><td>$A\cos(\omega t)$</td><td>Cosine</td></tr>
+        <tr><td>13a</td><td>$\dfrac{A}{\tau s+1}$</td><td>$\dfrac{A}{\tau}e^{-t/\tau}$</td><td><strong>Decaying exp (τs form)</strong></td></tr>
+        <tr><td>13b</td><td>$\dfrac{A}{s+a}$</td><td>$Ae^{-at}$</td><td>Decaying exp (a form)</td></tr>
+        <tr><td>17a</td><td>$\dfrac{A}{s(\tau s+1)}$</td><td>$A(1-e^{-t/\tau})$</td><td><strong>Rising exp (τs form)</strong></td></tr>
+        <tr><td>17b</td><td>$\dfrac{A}{s(s+a)}$</td><td>$\dfrac{A}{a}(1-e^{-at})$</td><td>Rising exp (a form)</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- ====================================================
+       PROBLEM 1  (values: 92V DC | 89Vp sine 9 rad/s | 67V/s ramp | 70Vp τ=4s decay | 33Vp τ=6s rise)
+  ===================================================== -->
+  <div class="problem-section" id="p1">
+    <div class="problem-header">Problem 1 &nbsp;— Sample values: 92 V DC · 89 Vp / 9 rad/s sine · 67 V/s ramp · 70 Vp / τ=4 s decay · 33 Vp / τ=6 s rise</div>
+    <div class="problem-body">
+
+      <!-- 1.1 -->
+      <div class="q-block">
+        <div class="q-num">1.1</div>
+        <div class="q-text">What is the <strong>time domain equation</strong> of a 92 V DC voltage? <span class="pts">(6.67 pts)</span></div>
+        <div class="answer-box">
+          <div class="label">Answer</div>
+          <div class="value">$$v(t) = 92 \text{ V}$$</div>
+        </div>
+        <div class="work-box">
+          <div class="label">Work</div>
+          <div class="step">A DC voltage is constant over all time $t \geq 0$.</div>
+          <div class="step">$$f(t) = A \quad\Rightarrow\quad v(t) = 92 \text{ V}$$</div>
+        </div>
+      </div>
+
+      <!-- 1.2 -->
+      <div class="q-block">
+        <div class="q-num">1.2</div>
+        <div class="q-text">Using the <strong>integral definition</strong>, what is the Laplace domain equation of a 92 V DC voltage? <span class="pts">(6.67 pts)</span></div>
+        <div class="answer-box">
+          <div class="label">Answer</div>
+          <div class="value">$$V(s) = \frac{92}{s}$$</div>
+        </div>
+        <div class="work-box">
+          <div class="label">Work — Integral Definition</div>
+          <div class="step">$$\mathcal{L}\{92\} = \int_0^{\infty} 92\, e^{-st}\, dt$$</div>
+          <div class="step">$$= 92 \int_0^{\infty} e^{-st}\, dt = 92 \left[\frac{e^{-st}}{-s}\right]_0^{\infty}$$</div>
+          <div class="step">$$= 92 \left(0 - \frac{1}{-s}\right) = \frac{92}{s}$$</div>
+          <div class="step"><em>General form:</em> $\mathcal{L}\{A\} = \dfrac{A}{s}$</div>
+        </div>
+      </div>
+
+      <!-- 1.3 -->
+      <div class="q-block">
+        <div class="q-num">1.3</div>
+        <div class="q-text">What is the <strong>table line number</strong> for the Laplace Transform of a 92 V DC voltage? <span class="pts">(6.67 pts)</span></div>
+        <div class="answer-box">
+          <div class="label">Answer</div>
+          <div class="value"><span class="table-ref-badge">Line 2</span></div>
+        </div>
+        <div class="work-box">
+          <div class="label">Work</div>
+          <div class="step">Table entry 2: $F(s) = \dfrac{A}{s}$ corresponds to $f(t) = A$ (step/DC). &nbsp; The A=92 constant is pulled out in front by the linearity property: $\mathcal{L}\{A \cdot f(t)\} = A \cdot \mathcal{L}\{f(t)\}$.</div>
+        </div>
+      </div>
+
+      <!-- 1.4 -->
+      <div class="q-block">
+        <div class="q-num">1.4</div>
+        <div class="q-text">What is the <strong>time domain equation</strong> of a 89 Vp sine wave with ω = 9 rad/s and no phase shift? <span class="pts">(6.67 pts)</span></div>
+        <div class="answer-box">
+          <div class="label">Answer</div>
+          <div class="value">$$v(t) = 89\sin(9t) \text{ V}$$</div>
+        </div>
+        <div class="work-box">
+          <div class="label">Work</div>
+          <div class="step">General sine: $f(t) = A\sin(\omega t + \phi)$</div>
+          <div class="step">$A = 89\text{ V}$, $\omega = 9\text{ rad/s}$, $\phi = 0$ (no phase shift)</div>
+          <div class="step">$$v(t) = 89\sin(9t)$$</div>
+        </div>
+      </div>
+
+      <!-- 1.5 -->
+      <div class="q-block">
+        <div class="q-num">1.5</div>
+        <div class="q-text">Using the <strong>integral definition</strong>, what is the Laplace of 89 Vp sine, ω = 9 rad/s? <span class="pts">(6.67 pts)</span></div>
+        <div class="answer-box">
+          <div class="label">Answer</div>
+          <div class="value">$$V(s) = \frac{89 \cdot 9}{s^2 + 9^2} = \frac{801}{s^2 + 81}$$</div>
+        </div>
+        <div class="work-box">
+          <div class="label">Work — Integral Definition</div>
+          <div class="step">$$\mathcal{L}\{89\sin(9t)\} = \int_0^{\infty} 89\sin(9t)\,e^{-st}\,dt$$</div>
+          <div class="step">Pull constant out: $= 89 \int_0^{\infty} \sin(9t)\,e^{-st}\,dt$</div>
+          <div class="step">Use known result $\int_0^\infty \sin(\omega t)e^{-st}dt = \dfrac{\omega}{s^2+\omega^2}$:</div>
+          <div class="step">$$= 89 \cdot \frac{9}{s^2+81} = \frac{801}{s^2+81}$$</div>
+          <div class="step"><em>General form:</em> $\mathcal{L}\{A\sin(\omega t)\} = \dfrac{A\omega}{s^2+\omega^2}$</div>
+        </div>
+      </div>
+
+      <!-- 1.6 -->
+      <div class="q-block">
+        <div class="q-num">1.6</div>
+        <div class="q-text">What is the <strong>table line number</strong> for the Laplace of 89 Vp sine, ω = 9 rad/s? <span class="pts">(6.67 pts)</span></div>
+        <div class="answer-box">
+          <div class="label">Answer</div>
+          <div class="value"><span class="table-ref-badge">Line 6</span></div>
+        </div>
+        <div class="work-box">
+          <div class="label">Work</div>
+          <div class="step">Table entry 6: $F(s) = \dfrac{A\omega}{s^2+\omega^2}$ corresponds to $f(t) = A\sin(\omega t)$.</div>
+        </div>
+      </div>
+
+      <!-- 1.7 -->
+      <div class="q-block">
+        <div class="q-num">1.7</div>
+        <div class="q-text">What is the <strong>time domain equation</strong> of a ramp starting at 0 V, rising 67 V in a second? <span class="pts">(6.67 pts)</span></div>
+        <div class="answer-box">
+          <div class="label">Answer</div>
+          <div class="value">$$v(t) = 67t \text{ V}$$</div>
+        </div>
+        <div class="work-box">
+          <div class="label">Work</div>
+          <div class="step">A ramp with slope $m$ V/s: $f(t) = mt$</div>
+          <div class="step">Rises 67 V in 1 second → slope = 67 V/s</div>
+          <div class="step">$$v(t) = 67t$$</div>
+        </div>
+      </div>
+
+      <!-- 1.8 -->
+      <div class="q-block">
+        <div class="q-num">1.8</div>
+        <div class="q-text">Using the <strong>integral definition</strong>, what is the Laplace of a 67 V/s ramp? <span class="pts">(6.67 pts)</span></div>
+        <div class="answer-box">
+          <div class="label">Answer</div>
+          <div class="value">$$V(s) = \frac{67}{s^2}$$</div>
+        </div>
+        <div class="work-box">
+          <div class="label">Work — Integral Definition</div>
+          <div class="step">$$\mathcal{L}\{67t\} = \int_0^{\infty} 67t\,e^{-st}\,dt = 67\int_0^{\infty} t\,e^{-st}\,dt$$</div>
+          <div class="step">Integrate by parts: $u = t$, $dv = e^{-st}dt$</div>
+          <div class="step">$$= 67\left[\frac{-te^{-st}}{s}\Big|_0^\infty + \int_0^\infty \frac{e^{-st}}{s}\,dt\right] = 67\left[0 + \frac{1}{s^2}\right] = \frac{67}{s^2}$$</div>
+          <div class="step"><em>General form:</em> $\mathcal{L}\{At\} = \dfrac{A}{s^2}$</div>
+        </div>
+      </div>
+
+      <!-- 1.9 -->
+      <div class="q-block">
+        <div class="q-num">1.9</div>
+        <div class="q-text">What is the <strong>table line number</strong> for the Laplace of a 67 V/s ramp? <span class="pts">(6.67 pts)</span></div>
+        <div class="answer-box">
+          <div class="label">Answer</div>
+          <div class="value"><span class="table-ref-badge">Line 4</span></div>
+        </div>
+        <div class="work-box">
+          <div class="label">Work</div>
+          <div class="step">Table entry 4: $F(s) = \dfrac{A}{s^2}$ corresponds to $f(t) = At$ (ramp).</div>
+        </div>
+      </div>
+
+      <!-- 1.10 -->
+      <div class="q-block">
+        <div class="q-num">1.10</div>
+        <div class="q-text">What is the <strong>time domain equation</strong> of a decaying exponential with peak 70 Vp and time constant τ = 4 s? <span class="pts">(6.67 pts)</span></div>
+        <div class="answer-box">
+          <div class="label">Answer</div>
+          <div class="value">$$v(t) = 70\,e^{-t/4} \text{ V}$$</div>
+        </div>
+        <div class="work-box">
+          <div class="label">Work</div>
+          <div class="step">Decaying exponential general form: $f(t) = A\,e^{-t/\tau}$</div>
+          <div class="step">$A = 70\text{ V}$ (peak at $t=0$), $\tau = 4\text{ s}$</div>
+          <div class="step">$$v(t) = 70\,e^{-t/4}$$</div>
+        </div>
+      </div>
+
+      <!-- 1.11 -->
+      <div class="q-block">
+        <div class="q-num">1.11</div>
+        <div class="q-text">Using the <strong>integral definition</strong>, what is the Laplace of a 70 Vp decaying exp with τ = 4 s? <span class="pts">(6.67 pts)</span></div>
+        <div class="answer-box">
+          <div class="label">Answer</div>
+          <div class="value">$$V(s) = \frac{70 \cdot 4}{4s+1} = \frac{280}{4s+1}$$</div>
+        </div>
+        <div class="work-box">
+          <div class="label">Work — Integral Definition</div>
+          <div class="step">$$\mathcal{L}\{70\,e^{-t/4}\} = \int_0^{\infty} 70\,e^{-t/4}\,e^{-st}\,dt = 70\int_0^{\infty} e^{-(s+1/4)t}\,dt$$</div>
+          <div class="step">$$= 70 \cdot \frac{1}{s+\frac{1}{4}} = \frac{70}{s+0.25} = \frac{70 \cdot 4}{4s+1} = \frac{280}{4s+1}$$</div>
+          <div class="step"><em>General form (τs form):</em> $\mathcal{L}\left\{Ae^{-t/\tau}\right\} = \dfrac{A\tau}{\tau s+1}$</div>
+        </div>
+      </div>
+
+      <!-- 1.12 -->
+      <div class="q-block">
+        <div class="q-num">1.12</div>
+        <div class="q-text">What is the <strong>table line number</strong> for the Laplace of a 70 Vp decaying exp, τ = 4 s? (Use τs form) <span class="pts">(6.67 pts)</span></div>
+        <div class="answer-box">
+          <div class="label">Answer</div>
+          <div class="value"><span class="table-ref-badge">Line 13a</span></div>
+        </div>
+        <div class="work-box">
+          <div class="label">Work</div>
+          <div class="step">Table entry 13a: $F(s) = \dfrac{A}{\tau s+1}$ corresponds to $f(t) = \dfrac{A}{\tau}e^{-t/\tau}$.</div>
+          <div class="step">Our function $70e^{-t/4}$ matches with $A\tau = 70 \cdot 4 = 280$, so $F(s) = \dfrac{280}{4s+1}$. ✓</div>
+          <div class="step"><strong>Note:</strong> The question says "Use the τs form" — that is entry <strong>13a</strong> (not 13b which uses $s+a$ form).</div>
+        </div>
+      </div>
+
+      <!-- 1.13 -->
+      <div class="q-block">
+        <div class="q-num">1.13</div>
+        <div class="q-text">What is the <strong>time domain equation</strong> of a <em>rising</em> exponential with peak 33 Vp and τ = 6 s? <span class="pts">(6.67 pts)</span></div>
+        <div class="answer-box">
+          <div class="label">Answer</div>
+          <div class="value">$$v(t) = 33\!\left(1 - e^{-t/6}\right) \text{ V}$$</div>
+        </div>
+        <div class="work-box">
+          <div class="label">Work</div>
+          <div class="step">Rising (charging) exponential: starts at 0, rises toward peak A.</div>
+          <div class="step">General form: $f(t) = A(1 - e^{-t/\tau})$</div>
+          <div class="step">$A = 33\text{ V}$, $\tau = 6\text{ s}$</div>
+          <div class="step">$$v(t) = 33(1 - e^{-t/6})$$</div>
+          <div class="step">Check: at $t=0$: $33(1-1) = 0$ ✓ &nbsp;&nbsp; as $t\to\infty$: $33(1-0) = 33$ V ✓</div>
+        </div>
+      </div>
+
+      <!-- 1.14 -->
+      <div class="q-block">
+        <div class="q-num">1.14</div>
+        <div class="q-text">Using the <strong>integral definition</strong>, what is the Laplace of the 33 Vp rising exp, τ = 6 s? <span class="pts">(6.67 pts)</span></div>
+        <div class="answer-box">
+          <div class="label">Answer</div>
+          <div class="value">$$V(s) = \frac{33}{s(6s+1)}$$</div>
+        </div>
+        <div class="work-box">
+          <div class="label">Work — Integral Definition</div>
+          <div class="step">$$\mathcal{L}\{33(1-e^{-t/6})\} = 33\left[\mathcal{L}\{1\} - \mathcal{L}\{e^{-t/6}\}\right]$$</div>
+          <div class="step">$$= 33\left[\frac{1}{s} - \frac{1}{s+\frac{1}{6}}\right] = 33\left[\frac{1}{s} - \frac{6}{6s+1}\right]$$</div>
+          <div class="step">$$= 33 \cdot \frac{(6s+1) - 6s}{s(6s+1)} = 33 \cdot \frac{1}{s(6s+1)} = \frac{33}{s(6s+1)}$$</div>
+          <div class="step"><em>General form (τs form):</em> $\mathcal{L}\{A(1-e^{-t/\tau})\} = \dfrac{A}{s(\tau s+1)}$</div>
+        </div>
+      </div>
+
+      <!-- 1.15 -->
+      <div class="q-block">
+        <div class="q-num">1.15</div>
+        <div class="q-text">What is the <strong>table line number</strong> for the Laplace of 33 Vp rising exp, τ = 6 s? (Use τs form) <span class="pts">(6.67 pts)</span></div>
+        <div class="answer-box">
+          <div class="label">Answer</div>
+          <div class="value"><span class="table-ref-badge">Line 17a</span></div>
+        </div>
+        <div class="work-box">
+          <div class="label">Work</div>
+          <div class="step">Table entry 17a: $F(s) = \dfrac{A}{s(\tau s+1)}$ corresponds to $f(t) = A(1-e^{-t/\tau})$.</div>
+          <div class="step"><strong>Note:</strong> "Use τs form" → entry 17a. (Entry 17b uses $s+a$ form.)</div>
+        </div>
+      </div>
+
+    </div><!-- end problem-body -->
+  </div><!-- end problem 1 -->
+
+
+  <!-- ====================================================
+       PROBLEM 2  (values: 49V DC | 74Vp 3 rad/s | 90 V/s ramp | 63Vp τ=2s | 22Vp τ=7s rise)
+  ===================================================== -->
+  <div class="problem-section" id="p2">
+    <div class="problem-header">Problem 2 &nbsp;— Sample values: 49 V DC · 74 Vp / 3 rad/s sine · 90 V/s ramp · 63 Vp / τ=2 s decay · 22 Vp / τ=7 s rise</div>
+    <div class="problem-body">
+
+      <div class="q-block">
+        <div class="q-num">2.1</div>
+        <div class="q-text">Time domain equation of a 49 V DC voltage. <span class="pts">(6.67 pts)</span></div>
+        <div class="answer-box"><div class="label">Answer</div><div class="value">$$v(t) = 49 \text{ V}$$</div></div>
+        <div class="work-box"><div class="label">Work</div><div class="step">DC voltage is constant: $v(t) = A = 49\text{ V}$</div></div>
+      </div>
+
+      <div class="q-block">
+        <div class="q-num">2.2</div>
+        <div class="q-text">Integral definition Laplace of 49 V DC. <span class="pts">(6.67 pts)</span></div>
+        <div class="answer-box"><div class="label">Answer</div><div class="value">$$V(s) = \frac{49}{s}$$</div></div>
+        <div class="work-box"><div class="label">Work</div>
+          <div class="step">$$\mathcal{L}\{49\} = \int_0^\infty 49\,e^{-st}\,dt = 49\cdot\frac{1}{s} = \frac{49}{s}$$</div>
+        </div>
+      </div>
+
+      <div class="q-block">
+        <div class="q-num">2.3</div>
+        <div class="q-text">Table line number for 49 V DC. <span class="pts">(6.67 pts)</span></div>
+        <div class="answer-box"><div class="label">Answer</div><div class="value"><span class="table-ref-badge">Line 2</span></div></div>
+        <div class="work-box"><div class="label">Work</div><div class="step">Same as 1.3 — $\dfrac{A}{s}$ is always Line 2.</div></div>
+      </div>
+
+      <div class="q-block">
+        <div class="q-num">2.4</div>
+        <div class="q-text">Time domain equation: 74 Vp sine, ω = 3 rad/s, no phase shift. <span class="pts">(6.67 pts)</span></div>
+        <div class="answer-box"><div class="label">Answer</div><div class="value">$$v(t) = 74\sin(3t) \text{ V}$$</div></div>
+        <div class="work-box"><div class="label">Work</div><div class="step">$f(t) = A\sin(\omega t)$, $A=74$, $\omega=3$ rad/s → $v(t) = 74\sin(3t)$</div></div>
+      </div>
+
+      <div class="q-block">
+        <div class="q-num">2.5</div>
+        <div class="q-text">Integral definition Laplace of 74 Vp sine, ω = 3. <span class="pts">(6.67 pts)</span></div>
+        <div class="answer-box"><div class="label">Answer</div><div class="value">$$V(s) = \frac{74 \cdot 3}{s^2+9} = \frac{222}{s^2+9}$$</div></div>
+        <div class="work-box"><div class="label">Work</div>
+          <div class="step">$$\mathcal{L}\{74\sin(3t)\} = 74 \cdot \frac{3}{s^2+3^2} = \frac{222}{s^2+9}$$</div>
+        </div>
+      </div>
+
+      <div class="q-block">
+        <div class="q-num">2.6</div>
+        <div class="q-text">Table line number for 74 Vp sine, ω = 3. <span class="pts">(6.67 pts)</span></div>
+        <div class="answer-box"><div class="label">Answer</div><div class="value"><span class="table-ref-badge">Line 6</span></div></div>
+        <div class="work-box"><div class="label">Work</div><div class="step">Sine always maps to Line 6: $\dfrac{A\omega}{s^2+\omega^2}$.</div></div>
+      </div>
+
+      <div class="q-block">
+        <div class="q-num">2.7</div>
+        <div class="q-text">Time domain equation: ramp, 0 V start, rises 90 V in 1 s. <span class="pts">(6.67 pts)</span></div>
+        <div class="answer-box"><div class="label">Answer</div><div class="value">$$v(t) = 90t \text{ V}$$</div></div>
+        <div class="work-box"><div class="label">Work</div><div class="step">Slope = 90 V/s → $v(t) = 90t$</div></div>
+      </div>
+
+      <div class="q-block">
+        <div class="q-num">2.8</div>
+        <div class="q-text">Integral definition Laplace of 90 V/s ramp. <span class="pts">(6.67 pts)</span></div>
+        <div class="answer-box"><div class="label">Answer</div><div class="value">$$V(s) = \frac{90}{s^2}$$</div></div>
+        <div class="work-box"><div class="label">Work</div>
+          <div class="step">$$\mathcal{L}\{90t\} = 90\int_0^\infty t\,e^{-st}\,dt = 90\cdot\frac{1}{s^2} = \frac{90}{s^2}$$</div>
+        </div>
+      </div>
+
+      <div class="q-block">
+        <div class="q-num">2.9</div>
+        <div class="q-text">Table line number for 90 V/s ramp. <span class="pts">(6.67 pts)</span></div>
+        <div class="answer-box"><div class="label">Answer</div><div class="value"><span class="table-ref-badge">Line 4</span></div></div>
+        <div class="work-box"><div class="label">Work</div><div class="step">Ramp always maps to Line 4: $\dfrac{A}{s^2}$.</div></div>
+      </div>
+
+      <div class="q-block">
+        <div class="q-num">2.10</div>
+        <div class="q-text">Time domain: decaying exponential, peak 63 Vp, τ = 2 s. <span class="pts">(6.67 pts)</span></div>
+        <div class="answer-box"><div class="label">Answer</div><div class="value">$$v(t) = 63\,e^{-t/2} \text{ V}$$</div></div>
+        <div class="work-box"><div class="label">Work</div><div class="step">$v(t) = Ae^{-t/\tau} = 63e^{-t/2}$</div></div>
+      </div>
+
+      <div class="q-block">
+        <div class="q-num">2.11</div>
+        <div class="q-text">Integral definition Laplace of 63 Vp decay, τ = 2 s. <span class="pts">(6.67 pts)</span></div>
+        <div class="answer-box"><div class="label">Answer</div><div class="value">$$V(s) = \frac{63\cdot 2}{2s+1} = \frac{126}{2s+1}$$</div></div>
+        <div class="work-box"><div class="label">Work</div>
+          <div class="step">$$\mathcal{L}\{63e^{-t/2}\} = 63\int_0^\infty e^{-t/2}e^{-st}\,dt = \frac{63}{s+0.5} = \frac{63\cdot 2}{2s+1} = \frac{126}{2s+1}$$</div>
+        </div>
+      </div>
+
+      <div class="q-block">
+        <div class="q-num">2.12</div>
+        <div class="q-text">Table line number for 63 Vp decay, τ = 2 s (τs form). <span class="pts">(6.67 pts)</span></div>
+        <div class="answer-box"><div class="label">Answer</div><div class="value"><span class="table-ref-badge">Line 13a</span></div></div>
+        <div class="work-box"><div class="label">Work</div><div class="step">Decaying exp in τs form → Line 13a: $\dfrac{A}{\tau s+1}$. Always 13a when using τs form.</div></div>
+      </div>
+
+      <div class="q-block">
+        <div class="q-num">2.13</div>
+        <div class="q-text">Time domain: rising exponential, peak 22 Vp, τ = 7 s. <span class="pts">(6.67 pts)</span></div>
+        <div class="answer-box"><div class="label">Answer</div><div class="value">$$v(t) = 22\!\left(1 - e^{-t/7}\right) \text{ V}$$</div></div>
+        <div class="work-box"><div class="label">Work</div><div class="step">$v(t) = A(1-e^{-t/\tau}) = 22(1-e^{-t/7})$</div></div>
+      </div>
+
+      <div class="q-block">
+        <div class="q-num">2.14</div>
+        <div class="q-text">Integral definition Laplace of 22 Vp rising exp, τ = 7 s. <span class="pts">(6.67 pts)</span></div>
+        <div class="answer-box"><div class="label">Answer</div><div class="value">$$V(s) = \frac{22}{s(7s+1)}$$</div></div>
+        <div class="work-box"><div class="label">Work</div>
+          <div class="step">$$\mathcal{L}\{22(1-e^{-t/7})\} = 22\left[\frac{1}{s} - \frac{7}{7s+1}\right] = \frac{22}{s(7s+1)}$$</div>
+        </div>
+      </div>
+
+      <div class="q-block">
+        <div class="q-num">2.15</div>
+        <div class="q-text">Table line number for 22 Vp rising exp, τ = 7 s (τs form). <span class="pts">(6.67 pts)</span></div>
+        <div class="answer-box"><div class="label">Answer</div><div class="value"><span class="table-ref-badge">Line 17a</span></div></div>
+        <div class="work-box"><div class="label">Work</div><div class="step">Rising exp in τs form → Line 17a: $\dfrac{A}{s(\tau s+1)}$.</div></div>
+      </div>
+
+    </div>
+  </div><!-- end problem 2 -->
+
+
+  <!-- ====================================================
+       PROBLEM 3  (values: 25V DC | 30Vp 4 rad/s | 45 V/s ramp | 91Vp τ=8s | 55Vp τ=7s rise)
+  ===================================================== -->
+  <div class="problem-section" id="p3">
+    <div class="problem-header">Problem 3 &nbsp;— Sample values: 25 V DC · 30 Vp / 4 rad/s sine · 45 V/s ramp · 91 Vp / τ=8 s decay · 55 Vp / τ=7 s rise</div>
+    <div class="problem-body">
+
+      <div class="q-block">
+        <div class="q-num">3.1</div>
+        <div class="q-text">Time domain equation of a 25 V DC voltage. <span class="pts">(6.67 pts)</span></div>
+        <div class="answer-box"><div class="label">Answer</div><div class="value">$$v(t) = 25 \text{ V}$$</div></div>
+        <div class="work-box"><div class="label">Work</div><div class="step">DC voltage is constant: $v(t) = 25\text{ V}$</div></div>
+      </div>
+
+      <div class="q-block">
+        <div class="q-num">3.2</div>
+        <div class="q-text">Integral definition Laplace of 25 V DC. <span class="pts">(6.67 pts)</span></div>
+        <div class="answer-box"><div class="label">Answer</div><div class="value">$$V(s) = \frac{25}{s}$$</div></div>
+        <div class="work-box"><div class="label">Work</div>
+          <div class="step">$$\mathcal{L}\{25\} = \int_0^\infty 25\,e^{-st}\,dt = \frac{25}{s}$$</div>
+        </div>
+      </div>
+
+      <div class="q-block">
+        <div class="q-num">3.3</div>
+        <div class="q-text">Table line number for 25 V DC. <span class="pts">(6.67 pts)</span></div>
+        <div class="answer-box"><div class="label">Answer</div><div class="value"><span class="table-ref-badge">Line 2</span></div></div>
+        <div class="work-box"><div class="label">Work</div><div class="step">DC/step always → Line 2.</div></div>
+      </div>
+
+      <div class="q-block">
+        <div class="q-num">3.4</div>
+        <div class="q-text">Time domain: 30 Vp sine, ω = 4 rad/s, no phase shift. <span class="pts">(6.67 pts)</span></div>
+        <div class="answer-box"><div class="label">Answer</div><div class="value">$$v(t) = 30\sin(4t) \text{ V}$$</div></div>
+        <div class="work-box"><div class="label">Work</div><div class="step">$v(t) = A\sin(\omega t) = 30\sin(4t)$</div></div>
+      </div>
+
+      <div class="q-block">
+        <div class="q-num">3.5</div>
+        <div class="q-text">Integral definition Laplace of 30 Vp sine, ω = 4. <span class="pts">(6.67 pts)</span></div>
+        <div class="answer-box"><div class="label">Answer</div><div class="value">$$V(s) = \frac{30 \cdot 4}{s^2+16} = \frac{120}{s^2+16}$$</div></div>
+        <div class="work-box"><div class="label">Work</div>
+          <div class="step">$$\mathcal{L}\{30\sin(4t)\} = 30\cdot\frac{4}{s^2+16} = \frac{120}{s^2+16}$$</div>
+        </div>
+      </div>
+
+      <div class="q-block">
+        <div class="q-num">3.6</div>
+        <div class="q-text">Table line number for 30 Vp sine, ω = 4. <span class="pts">(6.67 pts)</span></div>
+        <div class="answer-box"><div class="label">Answer</div><div class="value"><span class="table-ref-badge">Line 6</span></div></div>
+        <div class="work-box"><div class="label">Work</div><div class="step">Sine → Line 6: $\dfrac{A\omega}{s^2+\omega^2}$.</div></div>
+      </div>
+
+      <div class="q-block">
+        <div class="q-num">3.7</div>
+        <div class="q-text">Time domain: ramp, 0 V start, rises 45 V in 1 s. <span class="pts">(6.67 pts)</span></div>
+        <div class="answer-box"><div class="label">Answer</div><div class="value">$$v(t) = 45t \text{ V}$$</div></div>
+        <div class="work-box"><div class="label">Work</div><div class="step">Slope = 45 V/s → $v(t) = 45t$</div></div>
+      </div>
+
+      <div class="q-block">
+        <div class="q-num">3.8</div>
+        <div class="q-text">Integral definition Laplace of 45 V/s ramp. <span class="pts">(6.67 pts)</span></div>
+        <div class="answer-box"><div class="label">Answer</div><div class="value">$$V(s) = \frac{45}{s^2}$$</div></div>
+        <div class="work-box"><div class="label">Work</div>
+          <div class="step">$$\mathcal{L}\{45t\} = 45\cdot\frac{1}{s^2} = \frac{45}{s^2}$$</div>
+        </div>
+      </div>
+
+      <div class="q-block">
+        <div class="q-num">3.9</div>
+        <div class="q-text">Table line number for 45 V/s ramp. <span class="pts">(6.67 pts)</span></div>
+        <div class="answer-box"><div class="label">Answer</div><div class="value"><span class="table-ref-badge">Line 4</span></div></div>
+        <div class="work-box"><div class="label">Work</div><div class="step">Ramp → Line 4: $\dfrac{A}{s^2}$.</div></div>
+      </div>
+
+      <div class="q-block">
+        <div class="q-num">3.10</div>
+        <div class="q-text">Time domain: decaying exponential, peak 91 Vp, τ = 8 s. <span class="pts">(6.67 pts)</span></div>
+        <div class="answer-box"><div class="label">Answer</div><div class="value">$$v(t) = 91\,e^{-t/8} \text{ V}$$</div></div>
+        <div class="work-box"><div class="label">Work</div><div class="step">$v(t) = 91e^{-t/8}$</div></div>
+      </div>
+
+      <div class="q-block">
+        <div class="q-num">3.11</div>
+        <div class="q-text">Integral definition Laplace of 91 Vp decay, τ = 8 s. <span class="pts">(6.67 pts)</span></div>
+        <div class="answer-box"><div class="label">Answer</div><div class="value">$$V(s) = \frac{91\cdot 8}{8s+1} = \frac{728}{8s+1}$$</div></div>
+        <div class="work-box"><div class="label">Work</div>
+          <div class="step">$$\mathcal{L}\{91e^{-t/8}\} = \frac{91}{s+\frac{1}{8}} = \frac{91\cdot 8}{8s+1} = \frac{728}{8s+1}$$</div>
+        </div>
+      </div>
+
+      <div class="q-block">
+        <div class="q-num">3.12</div>
+        <div class="q-text">Table line number for 91 Vp decay, τ = 8 s (τs form). <span class="pts">(6.67 pts)</span></div>
+        <div class="answer-box"><div class="label">Answer</div><div class="value"><span class="table-ref-badge">Line 13a</span></div></div>
+        <div class="work-box"><div class="label">Work</div><div class="step">Decaying exp, τs form → Line 13a.</div></div>
+      </div>
+
+      <div class="q-block">
+        <div class="q-num">3.13</div>
+        <div class="q-text">Time domain: rising exponential, peak 55 Vp, τ = 7 s. <span class="pts">(6.67 pts)</span></div>
+        <div class="answer-box"><div class="label">Answer</div><div class="value">$$v(t) = 55\!\left(1 - e^{-t/7}\right) \text{ V}$$</div></div>
+        <div class="work-box"><div class="label">Work</div><div class="step">$v(t) = A(1-e^{-t/\tau}) = 55(1-e^{-t/7})$</div></div>
+      </div>
+
+      <div class="q-block">
+        <div class="q-num">3.14</div>
+        <div class="q-text">Integral definition Laplace of 55 Vp rising exp, τ = 7 s. <span class="pts">(6.67 pts)</span></div>
+        <div class="answer-box"><div class="label">Answer</div><div class="value">$$V(s) = \frac{55}{s(7s+1)}$$</div></div>
+        <div class="work-box"><div class="label">Work</div>
+          <div class="step">$$\mathcal{L}\{55(1-e^{-t/7})\} = 55\left[\frac{1}{s} - \frac{7}{7s+1}\right] = \frac{55}{s(7s+1)}$$</div>
+        </div>
+      </div>
+
+      <div class="q-block">
+        <div class="q-num">3.15</div>
+        <div class="q-text">Table line number for 55 Vp rising exp, τ = 7 s (τs form). <span class="pts">(6.67 pts)</span></div>
+        <div class="answer-box"><div class="label">Answer</div><div class="value"><span class="table-ref-badge">Line 17a</span></div></div>
+        <div class="work-box"><div class="label">Work</div><div class="step">Rising exp, τs form → Line 17a: $\dfrac{A}{s(\tau s+1)}$.</div></div>
+      </div>
+
+    </div>
+  </div><!-- end problem 3 -->
+
+
+  <!-- ====================================================
+       QUICK REFERENCE CHEAT SHEET
+  ===================================================== -->
+  <div class="ref-table-section" style="margin-top:32px;">
+    <h2>Quick-Reference: How to Handle ANY Values</h2>
+    <table class="ref">
+      <thead>
+        <tr>
+          <th>Signal Type</th>
+          <th>Time Domain $f(t)$</th>
+          <th>Laplace $F(s)$</th>
+          <th>Table Line</th>
+          <th>Notes</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>DC / Step</strong></td>
+          <td>$A$</td>
+          <td>$\dfrac{A}{s}$</td>
+          <td><strong>2</strong></td>
+          <td>$A$ = voltage in volts</td>
+        </tr>
+        <tr>
+          <td><strong>Sine (no phase)</strong></td>
+          <td>$A\sin(\omega t)$</td>
+          <td>$\dfrac{A\omega}{s^2+\omega^2}$</td>
+          <td><strong>6</strong></td>
+          <td>$A$ = peak, $\omega$ = rad/s</td>
+        </tr>
+        <tr>
+          <td><strong>Ramp</strong></td>
+          <td>$At$</td>
+          <td>$\dfrac{A}{s^2}$</td>
+          <td><strong>4</strong></td>
+          <td>$A$ = slope (V/s)</td>
+        </tr>
+        <tr>
+          <td><strong>Decaying Exp</strong></td>
+          <td>$Ae^{-t/\tau}$</td>
+          <td>$\dfrac{A\tau}{\tau s+1}$</td>
+          <td><strong>13a</strong></td>
+          <td>τs form; $A$ = peak</td>
+        </tr>
+        <tr>
+          <td><strong>Rising Exp</strong></td>
+          <td>$A(1-e^{-t/\tau})$</td>
+          <td>$\dfrac{A}{s(\tau s+1)}$</td>
+          <td><strong>17a</strong></td>
+          <td>τs form; $A$ = final value</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <p style="color:#999;font-size:0.8rem;margin-top:24px;text-align:center;">
+    Generated for ECET 33700 · Spring 2026 · Purdue University &nbsp;|&nbsp;
+    Reference: Floyd E. Nixon, <em>Handbook of Laplace Transformations</em>, 21e, Prentice-Hall.
+  </p>
+</div>
+</body>
+</html>
