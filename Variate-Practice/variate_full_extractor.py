@@ -29,6 +29,7 @@ HOW TO GET YOUR BEARER TOKEN + GROUP ASSESSMENT ID:
       python3 variate_full_extractor.py --from-har "yourfile.har"
 
 USAGE:
+  python3 variate_full_extractor.py --from-json variate_capture_*.json          # from devtools_capture_all.js
   python3 variate_full_extractor.py --token "Bearer CfDJ8..." --ga-id 13873
   python3 variate_full_extractor.py --token "Bearer CfDJ8..." --ga-id 13873 --output my_answers.html
   python3 variate_full_extractor.py --from-har /path/to/network.txt --ga-id 13873
@@ -733,13 +734,78 @@ def build_calculator_html(all_vars):
 # ──────────────────────────────────────────────────────────────────────────────
 # Main
 # ──────────────────────────────────────────────────────────────────────────────
+def build_from_json_capture(capture_path, output_prefix='variate'):
+    """Process a JSON file produced by devtools_capture_all.js.
+    Generates one HTML file per group assessment found in the capture.
+    """
+    print(f'Loading capture file: {capture_path}', file=sys.stderr)
+    with open(capture_path, 'r', encoding='utf-8') as f:
+        capture = json.load(f)
+
+    token = capture.get('token', '')
+    gas = capture.get('groupAssessments', [])
+    print(f'Found {len(gas)} group assessments in capture', file=sys.stderr)
+
+    from datetime import datetime
+    date_str = datetime.now().strftime('%Y-%m-%d %H:%M')
+
+    for ga in gas:
+        ga_id = str(ga['id'])
+        title = ga.get('name', f'Assessment {ga_id}')
+        problems = ga.get('problems', [])
+        artifact_cache = ga.get('artifactCache', {})
+
+        print(f'\nProcessing: {title} (ID {ga_id}, {len(problems)} problems)', file=sys.stderr)
+
+        # Monkey-patch fetch_artifact to use cache first, then live fetch
+        import functools
+        orig_fetch_artifact = globals()['fetch_artifact']
+        def cached_fetch(url, _cache=artifact_cache, _orig=orig_fetch_artifact):
+            if url in _cache and _cache[url]:
+                return _cache[url]
+            return _orig(url)
+        globals()['fetch_artifact'] = cached_fetch
+
+        all_vars = []
+        problems_html = ''
+        for prob in problems:
+            variables = json.loads(prob.get('formattedVariableValues', '{}'))
+            all_vars.append(variables)
+            problems_html += build_problem_html(prob)
+
+        globals()['fetch_artifact'] = orig_fetch_artifact  # restore
+
+        calc_html = build_calculator_html(all_vars)
+        problems_html += calc_html
+
+        safe_name = re.sub(r'[^\w\-]', '_', title)[:60]
+        out_path = f'{output_prefix}_{safe_name}.html'
+
+        html = HTML_TEMPLATE.format(
+            title=title,
+            ga_id=ga_id,
+            date=date_str,
+            problems_html=problems_html,
+            calculator_js=CALCULATOR_JS,
+        )
+        with open(out_path, 'w', encoding='utf-8') as f:
+            f.write(html)
+        print(f'  → {out_path}', file=sys.stderr)
+
+
 def main():
     parser = argparse.ArgumentParser(description='Variate API answer extractor')
     parser.add_argument('--token', help='Bearer token (copy from DevTools)')
     parser.add_argument('--ga-id', help='groupAssessment ID (from URL)')
     parser.add_argument('--from-har', help='Path to HAR/network dump text file')
+    parser.add_argument('--from-json', help='Path to JSON capture from devtools_capture_all.js')
     parser.add_argument('--output', '-o', help='Output HTML file', default='variate_answers.html')
     args = parser.parse_args()
+
+    # --from-json mode: batch process everything from the capture file
+    if args.from_json:
+        build_from_json_capture(args.from_json, output_prefix='variate')
+        return
 
     token = args.token
     ga_id = args.ga_id
@@ -762,7 +828,7 @@ def main():
 
     if not token or not ga_id:
         parser.print_help()
-        sys.exit('\nERROR: Provide either (--token + --ga-id) or --from-har')
+        sys.exit('\nERROR: Provide either --from-json, or (--token + --ga-id), or --from-har')
 
     # Fetch assessment info for title
     print('Fetching assessment metadata...', file=sys.stderr)
